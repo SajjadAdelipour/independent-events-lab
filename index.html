@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="An interactive simulator for teaching independent and dependent draws with replacement.">
   <title>Independent Events Lab</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2317324d%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M13%2024h38l-4%2027H17z%22%20fill%3D%22%23f4e9d1%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%2225%22%20cy%3D%2234%22%20r%3D%227%22%20fill%3D%22%23e95d4f%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%2239%22%20cy%3D%2239%22%20r%3D%227%22%20fill%3D%22%233aa981%22%2F%3E%0A%3C%2Fsvg%3E%0A" type="image/svg+xml">
   <style>
 :root {
   --ink: #17324d;
@@ -62,6 +61,10 @@ main { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; padding: 1.6rem 0 
 .event-key p + p { margin-top: .25rem; }
 .event-key strong { display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; margin-right: .35rem; border-radius: 50%; color: white; background: var(--ink); }
 
+.concept-note { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1rem; margin: 0 0 1.2rem; padding: .9rem 1rem; border: 1px solid #bfd3e0; border-radius: 14px; background: #eef6fa; }
+.concept-note p { margin: 0; color: #354f63; font-size: .9rem; line-height: 1.5; }
+.concept-badge { padding: .45rem .7rem; border-radius: 999px; color: white; background: var(--blue); font-size: .76rem; font-weight: 900; white-space: nowrap; }
+
 .lab-layout { display: grid; grid-template-columns: 330px 1fr; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--white); box-shadow: var(--shadow); }
 .controls { padding: 1.35rem; border-right: 1px solid var(--line); background: #fff; }
 .section-heading { display: flex; gap: .7rem; align-items: flex-start; margin-bottom: 1rem; }
@@ -92,7 +95,7 @@ select:disabled { opacity: .58; cursor: not-allowed; background: #f0f2f1; }
 .mode-option span { display: grid; gap: .1rem; }
 .mode-option strong { font-size: .86rem; }
 .mode-option small { color: var(--muted); line-height: 1.35; }
-.draw-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
+.draw-actions { display: grid; grid-template-columns: 1fr; gap: .55rem; }
 .primary-button, .secondary-button { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: .82rem .85rem; border-radius: 11px; cursor: pointer; font-weight: 800; }
 .primary-button { border: 0; color: white; background: var(--ink); box-shadow: 0 7px 16px rgba(23,50,77,.18); }
 .secondary-button { border: 1px solid var(--ink); color: var(--ink); background: white; }
@@ -118,7 +121,7 @@ select:disabled { opacity: .58; cursor: not-allowed; background: #f0f2f1; }
 .ball.blue, .swatch.blue { background-color: var(--blue); }
 .ball.yellow, .swatch.yellow { background-color: var(--yellow); color: #5d4510; text-shadow: none; }
 .bucket-caption { margin: .8rem 0 0; color: var(--muted); font-size: .82rem; font-weight: 700; }
-.draws { display: grid; grid-template-columns: 1fr 100px 1fr; align-items: center; gap: .7rem; }
+.draws { display: grid; grid-template-columns: minmax(120px, .8fr) 80px minmax(210px, 1.2fr); align-items: center; gap: .8rem; }
 .draw-slot-wrap { display: grid; justify-items: center; text-align: center; }
 .draw-slot-wrap p { margin: 0 0 .5rem; color: var(--muted); font-size: .76rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
 .draw-slot-wrap strong { margin-top: .5rem; font-size: .84rem; }
@@ -126,9 +129,15 @@ select:disabled { opacity: .58; cursor: not-allowed; background: #f0f2f1; }
 .draw-slot .ball { width: 76px; height: 76px; font-size: .9rem; }
 .rule-marker { display: grid; justify-items: center; gap: .25rem; color: var(--muted); font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
 .rule-line { width: 100%; border-top: 2px dotted #9aa7af; }
+.next-probability { min-height: 160px; display: grid; align-content: center; padding: 1rem 1.1rem; border: 2px dashed #aab5bd; border-radius: 16px; background: rgba(255,255,255,.6); transition: border-color .25s, background .25s, box-shadow .25s; }
+.next-probability.revealed { border-style: solid; border-color: #e6a17d; background: #fff7f1; box-shadow: 0 8px 20px rgba(23,50,77,.08); }
+.next-probability p { margin: 0 0 .7rem; color: var(--muted); font-size: .76rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.next-probability strong { display: block; font-size: clamp(1.2rem, 2.4vw, 1.65rem); font-variant-numeric: tabular-nums; }
+.next-probability small { display: block; margin-top: .45rem; color: var(--muted); line-height: 1.4; }
 .narration { margin: 0 1.5rem 1.5rem; padding: .8rem 1rem; border-left: 4px solid var(--accent); background: rgba(255,255,255,.72); color: #3e5568; font-size: .88rem; line-height: 1.45; }
 .flying-ball { position: fixed; z-index: 50; margin: 0; pointer-events: none; }
 .bucket.pulse { animation: bucketPulse .45s ease; }
+.bucket.shuffling { animation: bucketShuffle .12s ease-in-out 10 alternate; }
 
 .reasoning { margin-top: 1.2rem; padding: 1.35rem; border: 1px solid var(--line); border-radius: 20px; background: var(--white); box-shadow: 0 10px 32px rgba(23,50,77,.07); }
 .reasoning-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
@@ -141,6 +150,7 @@ select:disabled { opacity: .58; cursor: not-allowed; background: #f0f2f1; }
 .verdict.neutral { color: #596878; background: #e9eef1; }
 .verdict-dot { width: .65rem; height: .65rem; border-radius: 50%; background: currentColor; }
 .probability-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.probability-grid.two-column { grid-template-columns: repeat(2, 1fr); }
 .probability-item { padding: 1rem; background: white; transition: background .25s, box-shadow .25s; }
 .probability-item + .probability-item { border-left: 1px solid var(--line); }
 .probability-item.baseline { background: #f5f8fa; }
@@ -155,6 +165,10 @@ select:disabled { opacity: .58; cursor: not-allowed; background: #f0f2f1; }
 footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-size: .76rem; }
 
 @keyframes bucketPulse { 50% { transform: translateY(-4px) scale(1.015); } }
+@keyframes bucketShuffle {
+  from { transform: translateX(-3px) rotate(-.5deg); }
+  to { transform: translateX(3px) rotate(.5deg); }
+}
 
 @media (max-width: 850px) {
   .intro { align-items: flex-start; flex-direction: column; gap: .9rem; }
@@ -171,19 +185,21 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
   main { width: min(100% - 1rem, 1180px); padding-top: 1rem; }
   .colour-controls { grid-template-columns: 1fr; }
   .event-targets { grid-template-columns: 1fr; }
+  .concept-note { grid-template-columns: 1fr; gap: .6rem; }
+  .concept-badge { justify-self: start; }
   .stage { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem 1rem; }
-  .draws { width: 100%; grid-template-columns: 1fr 55px 1fr; }
+  .draws { width: 100%; grid-template-columns: minmax(90px, .7fr) 45px minmax(175px, 1.3fr); }
   .draw-slot { width: 82px; height: 82px; }
   .draw-slot .ball { width: 62px; height: 62px; }
   .probability-grid { grid-template-columns: 1fr; }
+  .probability-grid.two-column { grid-template-columns: 1fr; }
   .probability-item + .probability-item { border-left: 0; border-top: 1px solid var(--line); }
   .reasoning-heading { align-items: flex-start; flex-direction: column; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
-
-</style>
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -198,12 +214,17 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
     <section class="intro" aria-labelledby="intro-title">
       <div>
         <h2 id="intro-title">Does the first draw change the second?</h2>
-        <p>Define two events, draw twice, and compare the probability of the second event before and after the first draw.</p>
+        <p>Define two events, realize the first draw, and see how it changes the probability of the second event.</p>
       </div>
       <div class="event-key" aria-label="Event definitions">
         <p><strong>A</strong> = first ball is <span data-event-a-name>red</span></p>
         <p><strong>B</strong> = second ball is <span data-event-b-name>red</span></p>
       </div>
+    </section>
+
+    <section class="concept-note" aria-label="Event and realization distinction">
+      <div class="concept-badge">Event ≠ realization</div>
+      <p><strong>Defining A as “the first ball is red” does not mean that red must be drawn.</strong> A describes the outcome of interest. The realized first draw may be red, green, or any other colour in the bucket; only then do we know whether A occurred.</p>
     </section>
 
     <div class="lab-layout">
@@ -250,10 +271,7 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
 
         <div class="draw-actions" aria-label="Drawing controls">
           <button id="drawOneButton" class="primary-button" type="button">
-            <span>Draw ball 1</span><span aria-hidden="true">→</span>
-          </button>
-          <button id="drawTwoButton" class="secondary-button" type="button" disabled>
-            <span>Draw ball 2</span><span aria-hidden="true">→</span>
+            <span>Shuffle and draw</span><span aria-hidden="true">→</span>
           </button>
         </div>
         <button id="clearTrialButton" class="clear-button" type="button" disabled>Clear current trial</button>
@@ -264,7 +282,7 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
         <div class="experiment-header">
           <div class="section-heading compact">
             <span class="step-number">3</span>
-            <div><h2 id="experiment-title">Run one trial</h2><p id="modeSummary">The first ball will be returned.</p></div>
+            <div><h2 id="experiment-title">Realize the first draw</h2><p id="modeSummary">The first ball will be returned.</p></div>
           </div>
           <span id="bucketCount" class="count-badge">5 balls</span>
         </div>
@@ -278,9 +296,9 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
             <p id="bucketCaption" class="bucket-caption">2 red · 3 green</p>
           </div>
 
-          <div class="draws" aria-label="Draw results">
+          <div class="draws" aria-label="First draw result and second-draw probability">
             <div class="draw-slot-wrap">
-              <p>Draw 1</p>
+              <p>Realized draw 1</p>
               <div id="drawOne" class="draw-slot"><span>?</span></div>
               <strong id="drawOneLabel">Waiting</strong>
             </div>
@@ -288,16 +306,17 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
               <span class="rule-line"></span>
               <span id="ruleLabel">replace</span>
             </div>
-            <div class="draw-slot-wrap">
-              <p>Draw 2</p>
-              <div id="drawTwo" class="draw-slot"><span>?</span></div>
-              <strong id="drawTwoLabel">Waiting</strong>
+            <div id="nextProbability" class="next-probability" aria-live="polite">
+              <p>Probability on draw 2</p>
+              <span id="actualProbabilityLabel" class="math-label">P(B | draw 1 result)</span>
+              <strong id="actualProbability">Draw first</strong>
+              <small id="actualProbabilityDetail">No second ball will be drawn.</small>
             </div>
           </div>
         </div>
 
         <div id="narration" class="narration" aria-live="polite">
-          Choose a rule, then draw two balls.
+          Choose a rule, then shuffle and realize the first draw.
         </div>
       </section>
     </div>
@@ -311,7 +330,7 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
         <div id="verdict" class="verdict independent"><span class="verdict-dot"></span><strong>Independent</strong></div>
       </div>
 
-      <div class="probability-grid">
+      <div class="probability-grid two-column">
         <div class="probability-item baseline">
           <p>Before draw 1</p>
           <span class="math-label">P(B)</span>
@@ -323,12 +342,6 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
           <span class="math-label">P(B | A)</span>
           <strong id="probGivenA">2/5 = 0.40</strong>
           <small id="givenADetail">The bucket is restored.</small>
-        </div>
-        <div id="givenNotAItem" class="probability-item">
-          <p>If draw 1 is not <span data-event-a-name>red</span></p>
-          <span class="math-label">P(B | not A)</span>
-          <strong id="probGivenNotA">2/5 = 0.40</strong>
-          <small id="givenNotADetail">The bucket is restored.</small>
         </div>
       </div>
 
@@ -342,7 +355,7 @@ footer { padding: 0 1rem 2rem; text-align: center; color: var(--muted); font-siz
   </main>
 
   <footer>
-    <p>One-bucket prototype · two draws · designed for classroom discussion</p>
+    <p>One-bucket probability simulator · designed for classroom discussion</p>
   </footer>
 
   <script>
@@ -373,24 +386,22 @@ const els = {
   bucketCount: document.querySelector('#bucketCount'),
   bucketCaption: document.querySelector('#bucketCaption'),
   drawOneButton: document.querySelector('#drawOneButton'),
-  drawTwoButton: document.querySelector('#drawTwoButton'),
   clearTrialButton: document.querySelector('#clearTrialButton'),
   resetButton: document.querySelector('#resetButton'),
   drawOne: document.querySelector('#drawOne'),
-  drawTwo: document.querySelector('#drawTwo'),
   drawOneLabel: document.querySelector('#drawOneLabel'),
-  drawTwoLabel: document.querySelector('#drawTwoLabel'),
   ruleLabel: document.querySelector('#ruleLabel'),
   modeSummary: document.querySelector('#modeSummary'),
   narration: document.querySelector('#narration'),
   setupMessage: document.querySelector('#setupMessage'),
   probB: document.querySelector('#probB'),
   probGivenA: document.querySelector('#probGivenA'),
-  probGivenNotA: document.querySelector('#probGivenNotA'),
   givenADetail: document.querySelector('#givenADetail'),
-  givenNotADetail: document.querySelector('#givenNotADetail'),
   givenAItem: document.querySelector('#givenAItem'),
-  givenNotAItem: document.querySelector('#givenNotAItem'),
+  actualProbabilityLabel: document.querySelector('#actualProbabilityLabel'),
+  actualProbability: document.querySelector('#actualProbability'),
+  actualProbabilityDetail: document.querySelector('#actualProbabilityDetail'),
+  nextProbability: document.querySelector('#nextProbability'),
   verdict: document.querySelector('#verdict'),
   explanation: document.querySelector('#explanation')
 };
@@ -467,9 +478,7 @@ function updateTheory() {
   const validEvents = n >= 2 && a > 0 && a < n && b > 0 && b < n;
   if (state.mode === 'replace') {
     els.probGivenA.textContent = a > 0 ? fractionText(b, n) : 'not defined';
-    els.probGivenNotA.textContent = a < n ? fractionText(b, n) : 'not defined';
     els.givenADetail.textContent = 'The bucket is restored.';
-    els.givenNotADetail.textContent = 'The bucket is restored.';
     els.modeSummary.textContent = 'The first ball will be returned.';
     els.ruleLabel.textContent = 'replace';
     if (validEvents) {
@@ -485,21 +494,9 @@ function updateTheory() {
     const sameTarget = state.targetA === state.targetB;
     const givenANumerator = sameTarget ? b - 1 : b;
     els.probGivenA.textContent = a > 0 ? fractionText(givenANumerator, n - 1) : 'not defined';
-    if (a < n) {
-      if (sameTarget) {
-        els.probGivenNotA.textContent = fractionText(b, n - 1);
-      } else {
-        els.probGivenNotA.textContent = fractionText(b * (n - a - 1), (n - a) * (n - 1));
-      }
-    } else {
-      els.probGivenNotA.textContent = 'not defined';
-    }
     els.givenADetail.textContent = sameTarget
       ? `One ${labelB} ball has been removed.`
       : `A ${labelA} ball is removed; the ${labelB} count stays the same.`;
-    els.givenNotADetail.textContent = sameTarget
-      ? `A non-${labelB} ball has been removed.`
-      : `The removed non-${labelA} ball may or may not be ${labelB}.`;
     els.modeSummary.textContent = 'The first ball will stay out.';
     els.ruleLabel.textContent = 'keep out';
     if (validEvents) {
@@ -519,13 +516,12 @@ function updateTheory() {
 function updateActionState() {
   const canDraw = total() >= 2;
   els.drawOneButton.disabled = state.drawing || state.step !== 'ready1' || !canDraw;
-  els.drawTwoButton.disabled = state.drawing || state.step !== 'ready2';
   els.clearTrialButton.disabled = state.drawing || state.step === 'ready1';
   const locked = state.drawing || state.step !== 'ready1';
   els.targetASelect.disabled = locked;
   els.targetBSelect.disabled = locked;
   document.querySelectorAll('input[name="mode"]').forEach(input => { input.disabled = locked; });
-  els.setupMessage.textContent = canDraw ? '' : 'Add at least two balls to run two draws.';
+  els.setupMessage.textContent = canDraw ? '' : 'Add at least two balls to compare the two draws.';
 }
 
 function setVerdict(kind, text) {
@@ -537,12 +533,14 @@ function resetDrawDisplay(message = 'Set the two events, then draw ball 1.') {
   state.step = 'ready1';
   state.drawing = false;
   state.workingCounts = { ...state.counts };
-  [els.drawOne, els.drawTwo].forEach(slot => { slot.innerHTML = '<span>?</span>'; });
+  els.drawOne.innerHTML = '<span>?</span>';
   els.drawOneLabel.textContent = 'Waiting';
-  els.drawTwoLabel.textContent = 'Waiting';
+  els.actualProbabilityLabel.textContent = 'P(B | draw 1 result)';
+  els.actualProbability.textContent = 'Draw first';
+  els.actualProbabilityDetail.textContent = 'No second ball will be drawn.';
   els.narration.textContent = message;
   els.givenAItem.classList.remove('actual-branch');
-  els.givenNotAItem.classList.remove('actual-branch');
+  els.nextProbability.classList.remove('revealed');
   renderBucket();
   renderControls();
   updateActionState();
@@ -584,14 +582,78 @@ async function animateToSlot(colour, slot) {
   slot.appendChild(makeBall(colour));
 }
 
+async function shuffleBucket() {
+  const initialBalls = [...els.bucketBalls.querySelectorAll('.ball')];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || initialBalls.length === 0) {
+    await wait(40);
+    return;
+  }
+
+  els.bucket.classList.add('shuffling');
+  for (let round = 0; round < 4; round += 1) {
+    const balls = [...els.bucketBalls.querySelectorAll('.ball')];
+    const oldPositions = new Map(balls.map(ball => [ball, ball.getBoundingClientRect()]));
+    const shuffled = [...balls];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const random = new Uint32Array(1);
+      crypto.getRandomValues(random);
+      const j = random[0] % (i + 1);
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    shuffled.forEach(ball => els.bucketBalls.appendChild(ball));
+
+    const animations = shuffled.map((ball, index) => {
+      const oldRect = oldPositions.get(ball);
+      const newRect = ball.getBoundingClientRect();
+      const startX = oldRect.left - newRect.left;
+      const startY = oldRect.top - newRect.top;
+      const direction = (index + round) % 2 === 0 ? 1 : -1;
+      const lift = 14 + ((index * 7 + round * 5) % 18);
+      const sway = direction * (14 + ((index * 5 + round * 3) % 17));
+      return ball.animate([
+        { transform: `translate(${startX}px, ${startY}px) rotate(0deg)` },
+        { transform: `translate(${sway}px, ${-lift}px) rotate(${direction * 38}deg)`, offset: .55 },
+        { transform: 'translate(0, 0) rotate(0deg)' }
+      ], {
+        duration: 300,
+        delay: (index % 3) * 12,
+        easing: 'cubic-bezier(.35,.05,.25,1)'
+      }).finished;
+    });
+    await Promise.all(animations);
+  }
+  els.bucket.classList.remove('shuffling');
+}
+
+function showActualSecondProbability(first) {
+  const n = total();
+  const b = state.counts[state.targetB];
+  const labelFirst = COLOURS[first].label.toLowerCase();
+  const labelB = COLOURS[state.targetB].label.toLowerCase();
+  const numerator = state.mode === 'replace' ? b : b - (first === state.targetB ? 1 : 0);
+  const denominator = state.mode === 'replace' ? n : n - 1;
+  const probability = fractionText(numerator, denominator);
+  const conditionalLabel = `P(B | draw 1 is ${labelFirst})`;
+  const detail = state.mode === 'replace'
+    ? `The ${labelFirst} ball was returned, so ${b} of ${n} balls are ${labelB}.`
+    : `The ${labelFirst} ball stays out, so ${numerator} of ${denominator} remaining balls are ${labelB}.`;
+
+  els.actualProbabilityLabel.textContent = conditionalLabel;
+  els.actualProbability.textContent = probability;
+  els.actualProbabilityDetail.textContent = detail;
+  els.nextProbability.classList.add('revealed');
+}
+
 async function drawFirstBall() {
   if (state.drawing || state.step !== 'ready1' || total() < 2) return;
   state.drawing = true;
   state.step = 'drawing1';
   renderControls();
   updateActionState();
-  els.narration.textContent = 'Mixing the bucket for draw 1…';
-  await wait(350);
+  els.narration.textContent = 'Shuffling the balls so that the first draw is random…';
+  await shuffleBucket();
 
   const first = randomColour(state.workingCounts);
   await animateToSlot(first, els.drawOne);
@@ -600,10 +662,9 @@ async function drawFirstBall() {
   renderBucket();
 
   const firstIsTarget = first === state.targetA;
-  const branch = firstIsTarget ? els.givenAItem : els.givenNotAItem;
-  branch.classList.add('actual-branch');
+  if (firstIsTarget) els.givenAItem.classList.add('actual-branch');
   const eventName = firstIsTarget ? 'A occurred' : 'A did not occur';
-  els.narration.textContent = `Draw 1 is ${first}. ${eventName}.`;
+  els.narration.textContent = `The realized first draw is ${first}. ${eventName}; defining A did not determine what would be drawn.`;
   await wait(650);
 
   if (state.mode === 'replace') {
@@ -618,33 +679,10 @@ async function drawFirstBall() {
     await wait(620);
   }
 
-  state.drawing = false;
-  state.step = 'ready2';
-  els.narration.textContent += ' Now click “Draw ball 2.”';
-  renderControls();
-  updateActionState();
-}
-
-async function drawSecondBall() {
-  if (state.drawing || state.step !== 'ready2') return;
-  state.drawing = true;
-  state.step = 'drawing2';
-  renderControls();
-  updateActionState();
-  els.narration.textContent = 'Drawing again from the current bucket…';
-  const second = randomColour(state.workingCounts);
-  await animateToSlot(second, els.drawTwo);
-  els.drawTwoLabel.textContent = COLOURS[second].label;
-  state.workingCounts[second] -= 1;
-  renderBucket();
-
-  const outcomeB = second === state.targetB ? 'B occurred' : 'B did not occur';
-  const conceptual = state.mode === 'replace'
-    ? 'The second probability did not depend on the first result.'
-    : 'The second probability depended on what happened first.';
-  els.narration.textContent = `Draw 2 is ${second}. ${outcomeB}. ${conceptual}`;
+  showActualSecondProbability(first);
   state.drawing = false;
   state.step = 'complete';
+  els.narration.textContent += ` The page now shows the probability of B on draw 2; no second draw is realized.`;
   renderControls();
   updateActionState();
 }
@@ -684,7 +722,6 @@ document.querySelectorAll('input[name="mode"]').forEach(input => {
 });
 
 els.drawOneButton.addEventListener('click', drawFirstBall);
-els.drawTwoButton.addEventListener('click', drawSecondBall);
 els.clearTrialButton.addEventListener('click', () => {
   resetDrawDisplay('Trial cleared. You can change the setup or draw ball 1 again.');
   updateTheory();
@@ -705,7 +742,7 @@ els.resetButton.addEventListener('click', () => {
 
 resetDrawDisplay();
 updateTheory();
-
-</script>
+  </script>
 </body>
 </html>
+
